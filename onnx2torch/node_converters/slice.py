@@ -41,6 +41,7 @@ def _get_slices(
             start, end, step = -start - 1, -end - 1, -step
 
         slices[axis] = slice(start, end, step)
+
     pos_axes_slices = list(slices.get(a, slice(None, None)) for a in range(max(axes) + 1))
     neg_axes_slices = list(slices.get(a, slice(None, None)) for a in range(min(axes), 0))
 
@@ -118,10 +119,10 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
 def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: disable=unused-argument
     return OperationConverterResult(
         torch_module=OnnxSlice(
-            graph.initializers[node.input_values[1]].to_torch().tolist(),
-            graph.initializers[node.input_values[2]].to_torch().tolist(),
-            graph.initializers[node.input_values[3]].to_torch().tolist(),
-            graph.initializers[node.input_values[4]].to_torch().tolist(),
+            graph.initializers[node.input_values[1]].to_torch().numpy(),
+            graph.initializers[node.input_values[2]].to_torch().numpy(),
+            graph.initializers[node.input_values[3]].to_torch().numpy(),
+            graph.initializers[node.input_values[4]].to_torch().numpy(),
         ),
         onnx_mapping=onnx_mapping_from_node(node),
     )

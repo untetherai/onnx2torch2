@@ -19,7 +19,7 @@ class OnnxReshape(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: disa
     def __init__(self, shape: np.ndarray):
         super().__init__()
         self.shape = shape
-        
+
     @staticmethod
     def _do_reshape(input_tensor: torch.Tensor, shape: np.ndarray) -> torch.Tensor:
         if any(x == 0 for x in shape):
@@ -48,6 +48,6 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
         raise NotImplementedError('"allowzero=1" is not implemented')
 
     return OperationConverterResult(
-        torch_module=OnnxReshape(graph.initializers[node.input_values[1]].to_torch().tolist(),),
+        torch_module=OnnxReshape(graph.initializers[node.input_values[1]].to_torch().numpy(),),
         onnx_mapping=onnx_mapping_from_node(node=node),
     )

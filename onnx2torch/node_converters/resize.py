@@ -63,25 +63,11 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
         input_tensor: torch.Tensor,
         roi: Optional[torch.Tensor] = None,
         scales: Optional[torch.Tensor] = None,
-        sizes: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         torch_mode = _onnx_mode_to_torch_mode(self.onnx_mode, input_tensor.dim() - 2)
         if not self.ignore_roi and roi is not None and roi.nelement() != 0:
             raise NotImplementedError('roi logic is not implemented.')
 
-        # Format of onnx scales and sizes is [n, c, d, h, w]
-        # But in torch only [d, h, w] (without batch and channel dimensions)
-        if sizes is not None:
-            if sizes.nelement() != 0:
-                sizes = sizes.tolist()
-                input_shape = list(input_tensor.shape)
-                if not self.ignore_bs_ch_size and input_shape[:2] != sizes[:2]:
-                    raise NotImplementedError('Pytorch\'s interpolate cannot resize channel or batch dimensions.')
-                sizes = sizes[2:]
-            else:
-                sizes = None
-
-        scales = None
         if self.scales is not None:
             if self.scales.size != 0:
                 if not np.array_equal(self.scales[:2], [1, 1]):
@@ -92,7 +78,7 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
 
         return torch.nn.functional.interpolate(
             input_tensor,
-            size=sizes,
+            size=None,
             scale_factor=scales,
             mode=torch_mode,
             align_corners=self.align_corners,
