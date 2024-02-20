@@ -91,7 +91,7 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
 
         return torch.nn.functional.interpolate(
             input_tensor,
-            size=None,
+            size=sizes,
             scale_factor=scales,
             mode=torch_mode,
             align_corners=self.align_corners,
