@@ -5,6 +5,7 @@ __all__ = [
 import warnings
 from typing import Optional
 
+import numpy as np
 import torch
 from torch import nn
 
@@ -48,12 +49,14 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
         align_corners: Optional[bool] = None,
         ignore_roi: bool = False,
         ignore_bs_ch_size: bool = False,
+        scales: Optional[np.ndarray] = None,
     ):
         super().__init__()
         self.onnx_mode = mode
         self.align_corners = align_corners
         self.ignore_roi = ignore_roi
         self.ignore_bs_ch_size = ignore_bs_ch_size
+        self.scales = scales
 
     def forward(  # pylint: disable=missing-function-docstring
         self,
@@ -78,12 +81,12 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
             else:
                 sizes = None
 
-        if scales is not None:
-            if scales.nelement() != 0:
-                scales = scales.tolist()
-                if scales[:2] != [1, 1]:
+        scales = None
+        if self.scales is not None:
+            if self.scales.size != 0:
+                if not np.array_equal(self.scales[:2], [1, 1]):
                     raise NotImplementedError('Pytorch\'s interpolate cannot scale channel or batch dimensions.')
-                scales = scales[2:]
+                scales = tuple(self.scales[2:].astype('int'))
             else:
                 scales = None
 
@@ -166,6 +169,7 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
             mode=mode,
             align_corners=_get_torch_align_corners(mode, coordinate_transformation_mode),
             ignore_roi=ignore_roi,
+            scales=graph.initializers[node.input_values[2]].to_torch().numpy(),
         ),
         onnx_mapping=onnx_mapping_from_node(node),
     )

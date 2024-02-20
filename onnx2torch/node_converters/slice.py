@@ -29,14 +29,10 @@ def _get_slices(
 ) -> Tuple[List, List, List]:
     if axes is None:
         axes = list(range(len(starts)))
-    else:
-        axes = axes.detach().cpu().numpy()
 
     if steps is None:
         steps = [1] * len(starts)
-    else:
-        steps = steps.detach().cpu().numpy()
-
+    
     slices = {}
     flip_dims = []
     for start, end, axis, step in zip(starts, ends, axes, steps):
@@ -45,7 +41,6 @@ def _get_slices(
             start, end, step = -start - 1, -end - 1, -step
 
         slices[axis] = slice(start, end, step)
-
     pos_axes_slices = list(slices.get(a, slice(None, None)) for a in range(max(axes) + 1))
     neg_axes_slices = list(slices.get(a, slice(None, None)) for a in range(min(axes), 0))
 
@@ -78,6 +73,9 @@ class OnnxSliceV9(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-clas
 
 
 class OnnxSlice(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: disable=missing-class-docstring
+    def __init__(self, starts: np.ndarray, ends: np.ndarray, axes: Optional[np.ndarray] = None, steps: Optional[torch.Tensor] = None):
+        super().__init__()
+        self.flip_dims, self.pos_axes_slices, self.neg_axes_slices = _get_slices(starts, ends, axes, steps)
     def forward(  # pylint: disable=missing-function-docstring
         self,
         input_tensor: torch.Tensor,
@@ -87,8 +85,7 @@ class OnnxSlice(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: disabl
         steps: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         def _forward():
-            flip_dims, pos_axes_slices, neg_axes_slices = _get_slices(starts, ends, axes, steps)
-            return _do_slice(input_tensor, flip_dims, pos_axes_slices, neg_axes_slices)
+            return _do_slice(input_tensor, self.flip_dims, self.pos_axes_slices, self.neg_axes_slices)
 
         if torch.onnx.is_in_onnx_export():
             args = [input_tensor, starts, ends]
@@ -98,7 +95,7 @@ class OnnxSlice(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: disabl
                 args.append(steps)
 
             return DefaultExportToOnnx.export(_forward, 'Slice', *args, {})
-
+        
         return _forward()
 
 
@@ -120,6 +117,11 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
 @add_converter(operation_type='Slice', version=13)
 def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: disable=unused-argument
     return OperationConverterResult(
-        torch_module=OnnxSlice(),
+        torch_module=OnnxSlice(
+            graph.initializers[node.input_values[1]].to_torch().tolist(),
+            graph.initializers[node.input_values[2]].to_torch().tolist(),
+            graph.initializers[node.input_values[3]].to_torch().tolist(),
+            graph.initializers[node.input_values[4]].to_torch().tolist(),
+        ),
         onnx_mapping=onnx_mapping_from_node(node),
     )
