@@ -3,7 +3,7 @@ __all__ = [
 ]
 
 import warnings
-from typing import Optional
+from typing import Optional, List
 
 import numpy as np
 import torch
@@ -14,7 +14,7 @@ from onnx2torch.onnx_graph import OnnxGraph
 from onnx2torch.onnx_node import OnnxNode
 from onnx2torch.utils.common import OnnxToTorchModule
 from onnx2torch.utils.common import OperationConverterResult
-from onnx2torch.utils.common import onnx_mapping_from_node
+from onnx2torch.utils.common import onnx_mapping_from_node, get_const_value
 
 _MODES_MAPPING = {
     ('nearest', 1): 'nearest',
@@ -45,18 +45,22 @@ def _onnx_mode_to_torch_mode(onnx_mode: str, dim_size: int) -> str:
 class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class-docstring
     def __init__(
         self,
+        roi: List,
+        scales: List,
+        sizes: List,
         mode: str = 'nearest',
         align_corners: Optional[bool] = None,
         ignore_roi: bool = False,
         ignore_bs_ch_size: bool = False,
-        scales: Optional[np.ndarray] = None,
     ):
         super().__init__()
         self.onnx_mode = mode
         self.align_corners = align_corners
         self.ignore_roi = ignore_roi
         self.ignore_bs_ch_size = ignore_bs_ch_size
+        self.roi = roi
         self.scales = scales
+        self.sizes = sizes
 
     def forward(  # pylint: disable=missing-function-docstring
         self,
@@ -65,30 +69,32 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
         scales: Optional[torch.Tensor] = None,
         sizes: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
+        breakpoint()
+        roi = roi.tolist() if roi != None and not self.roi else self.roi
+        scales = scales.tolist() if scales != None and not self.scales else self.scales
+        sizes = sizes.tolist() if sizes != None and not self.sizes else self.sizes
+
         torch_mode = _onnx_mode_to_torch_mode(self.onnx_mode, input_tensor.dim() - 2)
-        if not self.ignore_roi and roi is not None and roi.nelement() != 0:
+        if not self.ignore_roi and len(roi) != 0:
             raise NotImplementedError('roi logic is not implemented.')
 
         # Format of onnx scales and sizes is [n, c, d, h, w]
         # But in torch only [d, h, w] (without batch and channel dimensions)
-        if sizes is not None:
-            if sizes.nelement() != 0:
-                sizes = sizes.tolist()
-                input_shape = list(input_tensor.shape)
-                if not self.ignore_bs_ch_size and input_shape[:2] != sizes[:2]:
-                    raise NotImplementedError('Pytorch\'s interpolate cannot resize channel or batch dimensions.')
-                sizes = sizes[2:]
-            else:
-                sizes = None
+        if sizes:
+            input_shape = list(input_tensor.shape)
+            if not self.ignore_bs_ch_size and input_shape[:2] != sizes[:2]:
+                raise NotImplementedError('Pytorch\'s interpolate cannot resize channel or batch dimensions.')
+            sizes = sizes[2:]
+        else:
+            sizes = None
 
-        if self.scales is not None:
-            if self.scales.size != 0:
-                if not np.array_equal(self.scales[:2], [1, 1]):
-                    raise NotImplementedError('Pytorch\'s interpolate cannot scale channel or batch dimensions.')
-                scales = tuple(self.scales[2:].astype('int'))
-            else:
-                scales = None
-
+        if scales:
+            if not np.array_equal(scales[:2], [1, 1]):
+                raise NotImplementedError('Pytorch\'s interpolate cannot scale channel or batch dimensions.')
+            scales = tuple(scales[2:])
+        else:
+            scales = None
+        breakpoint()
         return torch.nn.functional.interpolate(
             input_tensor,
             size=sizes,
@@ -163,12 +169,22 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
         warnings.warn('With a extrapolation value other than 0.0, the results might differ significantly!')
 
     ignore_roi = coordinate_transformation_mode != 'tf_crop_and_resize'
+
+    constant_params = []
+    params_names = node.input_values[1:]
+    for name in params_names:
+        try:
+            constant_params.append(get_const_value(name, graph).tolist())
+        except KeyError:
+            constant_params.append([])
+    constant_params = constant_params + (3 - len(constant_params)) * [[]]
+
     return OperationConverterResult(
         torch_module=OnnxResize(
+            *constant_params,
             mode=mode,
             align_corners=_get_torch_align_corners(mode, coordinate_transformation_mode),
             ignore_roi=ignore_roi,
-            scales=graph.initializers[node.input_values[2]].to_torch().numpy(),
         ),
         onnx_mapping=onnx_mapping_from_node(node),
     )
