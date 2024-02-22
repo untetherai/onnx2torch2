@@ -69,7 +69,6 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
         scales: Optional[torch.Tensor] = None,
         sizes: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
-        breakpoint()
         roi = roi.tolist() if roi != None and not self.roi else self.roi
         scales = scales.tolist() if scales != None and not self.scales else self.scales
         sizes = sizes.tolist() if sizes != None and not self.sizes else self.sizes
@@ -94,7 +93,7 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
             scales = tuple(scales[2:])
         else:
             scales = None
-        breakpoint()
+
         return torch.nn.functional.interpolate(
             input_tensor,
             size=sizes,
