@@ -106,7 +106,7 @@ class OnnxResize(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class
 class OnnxResizeV10(nn.Module, OnnxToTorchModule):  # pylint: disable=missing-class-docstring
     def __init__(self, mode: str = 'nearest'):
         super().__init__()
-        self._resize = OnnxResize(mode=mode)
+        self._resize = OnnxResize(roi=[], scales=[], sizes=[], mode=mode)
 
     def forward(  # pylint: disable=missing-function-docstring
         self,
