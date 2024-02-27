@@ -105,7 +105,6 @@ class OnnxSlice(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: disabl
                 args.append(steps)
 
             return DefaultExportToOnnx.export(_forward, 'Slice', *args, {})
-        
         return _forward()
 
 
