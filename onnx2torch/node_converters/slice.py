@@ -137,8 +137,6 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
 
 
     return OperationConverterResult(
-        torch_module=OnnxSlice(
-            *constant_params
-        ),
+        torch_module=OnnxSlice(*constant_params),
         onnx_mapping=onnx_mapping_from_node(node),
     )
