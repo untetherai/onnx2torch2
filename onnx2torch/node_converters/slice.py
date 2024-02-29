@@ -128,9 +128,9 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
     constant_params = []
     params_names = node.input_values[1:]
     for name in params_names:
-        try:
+        if name in graph.initializers or name in graph._node_output_values:
             constant_params.append(get_const_value(name, graph).tolist())
-        except KeyError:
+        else:
             constant_params.append([])
     constant_params = constant_params + (4 - len(constant_params)) * [[]]
 

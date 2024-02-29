@@ -48,9 +48,11 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
     if node.attributes.get('allowzero', 0) == 1:
         raise NotImplementedError('"allowzero=1" is not implemented')
     
-    try:
-        shape = get_const_value(node.input_values[1], graph).tolist()
-    except:
+    param_name = node.input_values[1]
+
+    if param_name in graph.initializers or param_name in graph._node_output_values:
+        shape = get_const_value(param_name, graph).tolist()
+    else:
         shape = []
 
     return OperationConverterResult(
