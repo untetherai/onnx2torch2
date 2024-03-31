@@ -95,6 +95,7 @@ OneHot
 onnx
 ONNX
 opset
+OperationConverterResult
 OptionalGetElement
 OptionalHasElement
 PRelu
