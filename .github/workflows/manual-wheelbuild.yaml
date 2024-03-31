@@ -1,7 +1,10 @@
 name: Wheel builder
 
 on:
+
     workflow_dispatch:
+
+    push:
 
 permissions:
   contents: read  #  to fetch code (actions/checkout)
