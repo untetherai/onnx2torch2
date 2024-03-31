@@ -13,12 +13,15 @@
 # no representation or warranty that this Information does not infringe
 # any third party patent, copyright or other proprietary right.
 import warnings
-from typing import Optional, cast, Any
+from typing import Any
+from typing import Optional
+from typing import cast
 
 import torch
-from torch import nn, fx
-from onnx2torch2 import node_converters
+from torch import fx
+from torch import nn
 
+from onnx2torch2 import node_converters
 from onnx2torch2.node_converters.registry import add_converter
 from onnx2torch2.onnx_graph import OnnxGraph
 from onnx2torch2.onnx_node import OnnxNode

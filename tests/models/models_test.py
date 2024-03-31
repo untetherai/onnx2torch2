@@ -1,5 +1,7 @@
-from typing import Tuple, Any
 import random
+from typing import Any
+from typing import Tuple
+
 import numpy as np
 import pytest
 import torch
