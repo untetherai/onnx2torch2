@@ -9,7 +9,6 @@ from typing import Dict
 import numpy as np
 import torch
 from torch import nn
-from tqdm import tqdm
 
 from onnx2torch2.node_converters.registry import add_converter
 from onnx2torch2.onnx_graph import OnnxGraph
