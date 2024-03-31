@@ -69,8 +69,6 @@ jobs:
         if: ${{inputs.publish== true}}
         needs: ['build_wheels', 'build_sdist']
         runs-on: ubuntu-latest
-        permissions:
-            id-token: write
         steps:
         - uses: actions/setup-python@v4
           with:

@@ -1,5 +1,6 @@
 Acos
 Acosh
+activations
 allowzero
 Andrey
 ArgMax
@@ -86,6 +87,7 @@ MobileNetV
 Mul
 Multinomial
 nd
+nn
 NegativeLogLikelihoodLoss
 NonMaxSuppression
 NonZero
