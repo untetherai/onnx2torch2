@@ -124,7 +124,7 @@ Transformers:
 
 Here we show how to extend onnx2torch2 with new ONNX operation, that supported by both PyTorch and ONNX
 <details>
-<summary>and has the same behavior</summary>
+<summary>and has the same behaviour</summary>
 
 An example of such a module is [Relu](./onnx2torch2/node_converters/activations.py)
 
@@ -141,11 +141,11 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:
 
 Here we have registered an operation named ``Relu`` for opset versions 6, 13, 14.
 Note that the ``torch_module`` argument in ``OperationConverterResult`` must be a torch.nn.Module, not just a callable object!
-If Operation's behavior differs from one opset version to another, you should implement it separately.
+If Operation's behaviour differs from one opset version to another, you should implement it separately.
 </details>
 
 <details>
-<summary>but has different behavior</summary>
+<summary>but has different behaviour</summary>
 
 An example of such a module is [ScatterND](./onnx2torch2/node_converters/scatter_nd.py)
 
