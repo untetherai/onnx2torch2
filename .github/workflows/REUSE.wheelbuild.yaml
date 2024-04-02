@@ -35,6 +35,10 @@ jobs:
               python -m build --sdist --outdir dist
               python -m build --wheel --outdir dist
 
+          - name: Twine validation
+            run: |
+              twine check dist/*
+
           - name: Upload wheels
             uses: actions/upload-artifact@v2
             with:
