@@ -19,6 +19,7 @@ def _register(override_registry: bool = False) -> None:
             onnx_mapping=onnx_mapping_from_node(node),
         )
 
+
 def test_registry_override() -> None:
     # prove that converter is already registered
     assert get_converter("NonMaxSuppression", version=10) is not None
