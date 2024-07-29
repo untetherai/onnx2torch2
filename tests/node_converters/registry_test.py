@@ -1,8 +1,8 @@
 import pytest
 
-from onnx2torch2.node_converters.registry import add_converter, get_converter
-
 from onnx2torch2.node_converters.nms import OnnxNonMaxSuppression
+from onnx2torch2.node_converters.registry import add_converter
+from onnx2torch2.node_converters.registry import get_converter
 from onnx2torch2.onnx_graph import OnnxGraph
 from onnx2torch2.onnx_node import OnnxNode
 from onnx2torch2.utils.common import OperationConverterResult
