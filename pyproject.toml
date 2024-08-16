@@ -50,6 +50,29 @@ Issues = 'https://github.com/untetherai/onnx2torch2/issues'
 [tool.setuptools.packages.find]
 include = ['onnx2torch2*']
 
+[tool.commitizen]
+name = 'cz_conventional_commits'
+tag_format = '$version'
+version_scheme = 'pep440'
+version_provider = 'pep621'
+update_changelog_on_bump = true
+major_version_zero = true
+
+[tool.docformatter]
+recursive = true
+wrap-summaries = 0
+wrap-descriptions = 0
+blank = true
+black = true
+pre-summary-newline = true
+
+[tool.yamlfix]
+line_length = 120
+explicit_start = false
+sequence_style = 'keep_style'
+whitelines = 1
+section_whitelines = 1
+
 [tool.black]
 line-length = 120
 target-version = ['py38', 'py39', 'py310']
