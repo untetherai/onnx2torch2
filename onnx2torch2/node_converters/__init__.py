@@ -56,3 +56,4 @@ from onnx2torch2.node_converters.topk import *
 from onnx2torch2.node_converters.transpose import *
 from onnx2torch2.node_converters.unsqueeze import *
 from onnx2torch2.node_converters.where import *
+from onnx2torch2.node_converters.arg_extrema import *
