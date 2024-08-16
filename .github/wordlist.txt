@@ -23,7 +23,7 @@ ConvInteger
 ConvTranspose
 CumSum
 DCR
-DeepLabv
+DeepLabV
 Denisov
 DepthToSpace
 DequantizeLinear
@@ -37,6 +37,7 @@ Elu
 Erf
 EyeLike
 FCN
+GoogLeNet
 GPT
 GRU
 GatherElements
@@ -108,7 +109,7 @@ ReduceSumSquare
 RegNet
 Relu
 ResNext
-Resnet
+ResNet
 RetinaNet
 ReverseSequence
 Roi
@@ -146,9 +147,9 @@ Unsqueeze
 Untether
 Upsample
 VGG
-Vit
+ViT
 WideResNet
-Yolov
+YOLOv
 activations
 ai
 allowzero
@@ -170,7 +171,7 @@ pytorch's
 resnet
 sexualized
 sublicense
-torchvision
+TorchVision
 triaging
 txt
 untether
