@@ -55,7 +55,7 @@ def _test_squeeze(
 
 
 @pytest.mark.filterwarnings('ignore::torch.jit._trace.TracerWarning')
-@pytest.mark.parametrize('opset_version', [11, 13, 21])
+@pytest.mark.parametrize('opset_version', [11, 13])  # opset_version 21 is not included in test for onnxruntime==1.15.1
 @pytest.mark.parametrize(
     'shape, axes',
     (
