@@ -1,6 +1,6 @@
 [project]
 name = 'onnx2torch2'
-version = '2.0.1'
+version = '2.0.2'
 license = {file = 'LICENSE'}
 description = 'ONNX to PyTorch converter'
 readme = {file = 'README.md', content-type = 'text/markdown'}
