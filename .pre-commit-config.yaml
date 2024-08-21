@@ -71,7 +71,13 @@ repos:
     hooks:
       - id: pylint
         language: system
-        args: [-rn, -sn]
+        args:
+        [
+          "-rn",
+          "-sn",
+          "--rcfile=.pylintrc",
+          "--output-format=colorized",
+        ]
 
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.356
