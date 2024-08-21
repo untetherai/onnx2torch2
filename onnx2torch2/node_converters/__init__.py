@@ -1,4 +1,5 @@
 from onnx2torch2.node_converters.activations import *
+from onnx2torch2.node_converters.arg_extrema import *
 from onnx2torch2.node_converters.average_pool import *
 from onnx2torch2.node_converters.batch_norm import *
 from onnx2torch2.node_converters.binary_math_operations import *
