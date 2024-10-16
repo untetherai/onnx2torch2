@@ -37,7 +37,7 @@ dev = [
     'isort',
     'onnxruntime',
     'pre-commit',
-    'pylint',
+    'pylint==3.2.6',
     'pytest',
     'requests',
     'tqdm',

@@ -40,7 +40,7 @@ jobs:
               twine check dist/*
 
           - name: Upload wheels
-            uses: actions/upload-artifact@v2
+            uses: actions/upload-artifact@v3
             with:
               name: packages
               path: dist/*
