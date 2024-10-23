@@ -126,7 +126,7 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
         # try and get padding value from node, or set as None
         try:
             pads = get_const_value(pads_name, graph).tolist()
-        except:
+        except KeyError:
             pads = None
 
     return OperationConverterResult(
