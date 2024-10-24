@@ -128,8 +128,8 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
             pads = get_const_value(pads_name, graph).tolist()
         except KeyError as e:
             raise (
-                f"Dynamic padding is not supported. Pad node `{node.name}` 
-                has padding arg `{pads_name}` with no static value. Error: {e}"
+                f"Dynamic padding is not supported. Pad node `{node.name}`"\
+                    "has padding arg `{pads_name}` with no static value. Error: {e}"
             )
 
     return OperationConverterResult(
