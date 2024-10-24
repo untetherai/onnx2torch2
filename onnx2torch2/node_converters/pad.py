@@ -123,7 +123,7 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
     pads_name = node.input_values[1]
     pads = []
     if pads_name in graph.initializers or pads_name in graph._node_output_values:  # pylint: disable=W0212
-        # try and get padding value frpads = Noneom node, or set as None
+        # try and get padding arg value
         try:
             pads = get_const_value(pads_name, graph).tolist()
         except KeyError as e:
