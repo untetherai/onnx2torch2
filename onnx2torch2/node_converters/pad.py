@@ -126,11 +126,11 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:  # pylint: 
         # try and get padding arg value
         try:
             pads = get_const_value(pads_name, graph).tolist()
-        except KeyError:
+        except KeyError as exc:
             raise ValueError(
                 f"Dynamic padding is not supported. Pad node `{node.name}`"
                 f"has padding arg `{pads_name}` with no static value."
-            )
+            ) from exc
 
     return OperationConverterResult(
         torch_module=OnnxPadDynamic(pads=pads, mode=mode),
