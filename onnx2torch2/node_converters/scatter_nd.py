@@ -67,7 +67,7 @@ class OnnxScatterND(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: di
         def _forward():
             # There is no scatter nd for torch, use following formula:
             # https://github.com/onnx/onnx/blob/master/docs/Operators.md#ScatterND
-            output = torch.tensor(data.clone(), device=data.device)
+            output = data.clone()  # to avoid RuntimeError: cannot mutate tensors with frozen storage
             ind_dim = indices.dim()
             # last dimension is a partial-index into data
             output_indices = torch.split(torch.t(indices.reshape((-1, indices.shape[-1]))), 1)
@@ -75,7 +75,7 @@ class OnnxScatterND(nn.Module, OnnxToTorchModuleWithCustomExport):  # pylint: di
             output_updates = updates.reshape((-1, *updates.shape[ind_dim - 1 :]))
             output[output_indices] = output_updates
 
-            return output
+            return output.to(data.device)
 
         if torch.onnx.is_in_onnx_export():
             onnx_attrs = self._onnx_attrs(opset_version=get_onnx_version())
