@@ -17,8 +17,8 @@ def is_symmetric_onnx_padding(padding: Tuple[int, ...]) -> bool:  # pylint: disa
 def onnx_auto_pad_to_torch_padding(  # pylint: disable=missing-function-docstring
     auto_pad: str,
     onnx_padding: Tuple[int, ...],
-    node: OnnxNode | None = None,
-    graph: OnnxGraph | None = None,
+    node: Union[OnnxNode, None] = None,
+    graph: Union[OnnxGraph, None] = None,
 ) -> Tuple[Union[int, Tuple[int, ...]], Optional[nn.Module]]:
     if auto_pad == 'NOTSET':
         if onnx_padding is None:
@@ -56,7 +56,6 @@ def onnx_auto_pad_to_torch_padding(  # pylint: disable=missing-function-docstrin
         pad_res = [p % 2 for p in paddings]
         if sum(pad_res) == 0:  # all are even paddings
             return [p // 2 for p in paddings], None
-        else:
-            raise NotImplementedError(f'"{auto_pad}" auto_pad is not implemented with odd padding')
+        raise NotImplementedError(f'"{auto_pad}" auto_pad is not implemented with odd padding')
 
     raise ValueError(f'Got unexpected auto_pad value "{auto_pad}"')
