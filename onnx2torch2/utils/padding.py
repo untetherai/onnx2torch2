@@ -1,12 +1,10 @@
 import math
-from typing import Optional
-from typing import Tuple
-from typing import Union
+from typing import Optional, Tuple, Union
 
-from torch import nn
+from onnx2torch2.node_converters.pad import OnnxPadStatic
 from onnx2torch2.onnx_graph import OnnxGraph
 from onnx2torch2.onnx_node import OnnxNode
-from onnx2torch2.node_converters.pad import OnnxPadStatic
+from torch import nn
 
 
 def is_symmetric_onnx_padding(padding: Tuple[int, ...]) -> bool:  # pylint: disable=missing-function-docstring
