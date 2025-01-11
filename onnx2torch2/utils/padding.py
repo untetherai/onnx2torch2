@@ -8,7 +8,6 @@ from onnx2torch2.onnx_graph import OnnxGraph
 from onnx2torch2.onnx_node import OnnxNode
 
 
-
 def is_symmetric_onnx_padding(padding: Tuple[int, ...]) -> bool:  # pylint: disable=missing-function-docstring
     half_len = len(padding) // 2
     return padding[:half_len] == padding[half_len:]
