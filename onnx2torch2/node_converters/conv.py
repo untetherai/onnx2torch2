@@ -48,6 +48,8 @@ def _(node: OnnxNode, graph: OnnxGraph) -> OperationConverterResult:
     padding, input_padding_module = onnx_auto_pad_to_torch_padding(
         onnx_padding=node_attributes.get('pads', [0] * spatial_rank * 2),
         auto_pad=node_attributes.get('auto_pad', 'NOTSET'),
+        node=node,
+        graph=graph,
     )
     common_kwargs = {
         'kernel_size': node_attributes.get('kernel_shape', weights.shape[2:]),
