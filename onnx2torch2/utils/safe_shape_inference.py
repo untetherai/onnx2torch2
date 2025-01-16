@@ -39,6 +39,7 @@ def safe_shape_inference(  # pylint: disable=missing-function-docstring
                 f=str(tmp_model_path),
                 save_as_external_data=True,
                 all_tensors_to_one_file=True,
+                convert_attribute=True,
             )
             return _shape_inference_by_model_path(tmp_model_path, output_path=tmp_model_path, **kwargs)
 
