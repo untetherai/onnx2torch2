@@ -33,7 +33,7 @@ dev = [
     'Pillow',
     'black',
     'build',
-    'googledrivedownloader',
+    'googledrivedownloader==0.2',
     'isort',
     'onnxruntime',
     'pre-commit',
